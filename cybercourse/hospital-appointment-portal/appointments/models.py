@@ -1,5 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cryptography.fernet import Fernet
+
+
+FERNET_KEY = b"gwRCnI8cqSedX-xOYB_XUthg67vABleo3s4EmxqY6Co="
+cipher = Fernet(FERNET_KEY)
 
 
 class Doctor(models.Model):
@@ -19,6 +24,16 @@ class PatientProfile(models.Model):
     phone = models.CharField(max_length=20)
 
     medical_record = models.TextField()
+
+    def set_medical_record(self, value):
+        self.medical_record = cipher.encrypt(
+            value.encode()
+        ).decode()
+
+    def get_medical_record(self):
+        return cipher.decrypt(
+            self.medical_record.encode()
+        ).decode()
 
     def __str__(self):
         return self.user.username

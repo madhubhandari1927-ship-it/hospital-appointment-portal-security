@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Available Doctors</title>
+</head>
+<body>
+
+<h1>Available Doctors</h1>
+
+<form method="get">
+    <input
+        type="text"
+        name="search"
+        placeholder="Search doctor by name"
+        value="{{ search }}"
+    >
+    <button type="submit">Search</button>
+</form>
+
+<hr>
+
+{% if doctors %}
+    {% for doctor in doctors %}
+        <p>
+            <strong>Name:</strong> {{ doctor.name }}
+            -
+            {{ doctor.specialization }}
+        </p>
+    {% endfor %}
+{% else %}
+    <p>No doctors found.</p>
+{% endif %}
+
+<h2>Patient Medical Records</h2>
+
+<p>To view a medical record, use:</p>
+
+<a href="/patient/3/medical-record/">
+    View Patient 3 Medical Record
+</a>
+
+</body>
+</html>
