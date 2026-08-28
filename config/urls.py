@@ -48,4 +48,10 @@ urlpatterns = [
         views.add_review,
         name='add_review'
     ),
+
+    path(
+        'doctor-search/',
+        views.doctor_search,
+        name='doctor_search'
+    ),
 ]

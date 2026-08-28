@@ -11,7 +11,6 @@ def home(request):
         <head>
             <title>Hospital Appointment Portal</title>
         </head>
-
         <body>
 
             <h1>Hospital Appointment Portal</h1>
@@ -65,6 +64,14 @@ def home(request):
             <p>
                 <a href="/review/">
                     Add Doctor Review
+                </a>
+            </p>
+
+            <hr>
+
+            <p>
+                <a href="/doctor-search/">
+                    Search Doctors
                 </a>
             </p>
 
@@ -215,12 +222,78 @@ def public_patient_information(request, patient_id):
 
 
 # ==========================================
-# FLAW 4 - FIXED
-# IMPROPER INPUT VALIDATION
+# FLAW 3 - FIXED
+# SQL INJECTION PROTECTION
 # ==========================================
 
+def doctor_search(request):
+
+    query = request.GET.get("q", "")
+
+    doctors = []
+
+    if query:
+
+        doctors = Doctor.objects.filter(
+            name__icontains=query
+        )
+
+    return HttpResponse(
+        f"""
+        <html>
+
+        <head>
+            <title>Doctor Search</title>
+        </head>
+
+        <body>
+
+            <h1>Doctor Search</h1>
+
+            <form method="get">
+
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Enter doctor name"
+                    value="{query}"
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+            <hr>
+
+            <h2>Search Results</h2>
+
+            <p>
+                Search query:
+                {query}
+            </p>
+
+            <p>
+                Results found:
+                {len(doctors)}
+            </p>
+
+            <br>
+
+            <a href="/">
+                Back to Home
+            </a>
+
+        </body>
+
+        </html>
+        """
+    )
+
 # ==========================================
-# FLAW 5 - CSRF PROTECTION
+# FLAW 4 - FIXED
+# IMPROPER INPUT VALIDATION
 # ==========================================
 
 def add_review(request):
@@ -247,6 +320,7 @@ def add_review(request):
                 return HttpResponse(
                     """
                     <html>
+
                     <head>
                         <title>Invalid Rating</title>
                     </head>
@@ -266,6 +340,7 @@ def add_review(request):
                         </a>
 
                     </body>
+
                     </html>
                     """,
                     status=400
@@ -281,6 +356,7 @@ def add_review(request):
             return HttpResponse(
                 f"""
                 <html>
+
                 <head>
                     <title>Review Submitted</title>
                 </head>
@@ -311,6 +387,7 @@ def add_review(request):
                     </a>
 
                 </body>
+
                 </html>
                 """
             )
@@ -334,6 +411,7 @@ def add_review(request):
     return HttpResponse(
         f"""
         <html>
+
         <head>
             <title>Add Doctor Review</title>
         </head>
@@ -384,6 +462,7 @@ def add_review(request):
             </form>
 
         </body>
+
         </html>
         """
     )

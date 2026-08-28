@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks</title>
+</head>
+<body>
+
+    <h1>Tasks</h1>
+
+    <ul id="tasks"></ul>
+
+    <script>
+        fetch('/tasks')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('tasks');
+
+                data.tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.textContent = task.name;
+                    list.appendChild(li);
+                });
+            });
+    </script>
+
+</body>
+</html>

@@ -1,5 +1,15 @@
+# Large installer/download files
+*.exe
+*.msi
+*.zip
+*.jar
+
+# Python generated files
 __pycache__/
 *.pyc
-db.sqlite3
-venv/
-.env
+
+# Django databases
+*.sqlite3
+
+# Images/downloads that are not project source
+cybercourse/*.jpeg

