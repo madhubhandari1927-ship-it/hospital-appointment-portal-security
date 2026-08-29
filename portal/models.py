@@ -1,14 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cryptography.fernet import Fernet
+from django.conf import settings
 
 
 class Doctor(models.Model):
     name = models.CharField(max_length=100)
     specialization = models.CharField(max_length=100)
-    qualification = models.CharField(max_length=200)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField()
-    available = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -20,20 +18,33 @@ class PatientProfile(models.Model):
         on_delete=models.CASCADE
     )
 
-    phone = models.CharField(
-        max_length=20
-    )
+    phone = models.CharField(max_length=20)
 
     medical_record = models.TextField()
 
     def __str__(self):
         return self.user.username
 
+    def set_medical_record(self, text):
+        key = settings.FERNET_KEY.encode()
+        cipher = Fernet(key)
+        self.medical_record = cipher.encrypt(
+            text.encode()
+        ).decode()
+
+    def get_medical_record(self):
+        key = settings.FERNET_KEY.encode()
+        cipher = Fernet(key)
+        return cipher.decrypt(
+            self.medical_record.encode()
+        ).decode()
+
 
 class Appointment(models.Model):
     patient = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='appointments'
     )
 
     doctor = models.ForeignKey(
@@ -41,43 +52,12 @@ class Appointment(models.Model):
         on_delete=models.CASCADE
     )
 
-    date = models.DateField()
-
-    time = models.TimeField()
+    appointment_date = models.DateTimeField()
 
     reason = models.TextField()
 
-    status = models.CharField(
-        max_length=20,
-        default='Pending'
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
     def __str__(self):
-        return f"{self.patient.username} - {self.doctor.name}"
-
-
-class Review(models.Model):
-    patient = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-
-    doctor = models.ForeignKey(
-        Doctor,
-        on_delete=models.CASCADE
-    )
-
-    rating = models.IntegerField()
-
-    comment = models.TextField()
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    def __str__(self):
-        return f"{self.doctor.name} - {self.rating}/5"
+        return (
+            f"{self.patient.username} - "
+            f"{self.doctor.name}"
+        )
