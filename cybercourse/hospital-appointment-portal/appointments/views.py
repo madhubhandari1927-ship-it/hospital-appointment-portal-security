@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Doctor, PatientProfile
+
+from .models import Doctor, PatientProfile, Appointment
 
 
 def doctor_list(request):
@@ -30,7 +31,8 @@ def patient_medical_record(request, patient_id):
         user_id=patient_id
     )
 
-    # Only the patient themselves or a staff user can see the record
+    # Only the patient themselves or a staff user
+    # can see the medical record.
     if request.user != profile.user and not request.user.is_staff:
         return render(
             request,
@@ -46,5 +48,31 @@ def patient_medical_record(request, patient_id):
         {
             'profile': profile,
             'medical_record': medical_record
+        }
+    )
+
+
+@login_required
+def appointment_detail(request, appointment_id):
+    appointment = get_object_or_404(
+        Appointment,
+        id=appointment_id
+    )
+
+    # SECURITY FIX:
+    # Only the appointment owner or a staff user
+    # can view the appointment.
+    if request.user != appointment.patient and not request.user.is_staff:
+        return render(
+            request,
+            'appointments/access_denied.html',
+            status=403
+        )
+
+    return render(
+        request,
+        'appointments/appointment_detail.html',
+        {
+            'appointment': appointment
         }
     )

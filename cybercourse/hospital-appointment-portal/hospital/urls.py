@@ -3,6 +3,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from appointments import views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -16,6 +17,12 @@ urlpatterns = [
         'patient/<int:patient_id>/medical-record/',
         views.patient_medical_record,
         name='patient_medical_record'
+    ),
+
+    path(
+        'appointment/<int:appointment_id>/',
+        views.appointment_detail,
+        name='appointment_detail'
     ),
 
     path(
