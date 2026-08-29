@@ -31,8 +31,9 @@ def patient_medical_record(request, patient_id):
         user_id=patient_id
     )
 
-    # Only the patient themselves or a staff user
-    # can see the medical record.
+    # SECURITY FIX:
+    # Only the patient themselves or an authorized staff user
+    # can view the medical record.
     if request.user != profile.user and not request.user.is_staff:
         return render(
             request,
@@ -60,7 +61,7 @@ def appointment_detail(request, appointment_id):
     )
 
     # SECURITY FIX:
-    # Only the appointment owner or a staff user
+    # Only the appointment owner or an authorized staff user
     # can view the appointment.
     if request.user != appointment.patient and not request.user.is_staff:
         return render(
